@@ -11,16 +11,11 @@ hunter_add_package(benchmark)
 find_package(benchmark CONFIG REQUIRED)
 
 add_subdirectory(utils)
-#add_subdirectory(bench)
-#add_subdirectory(internal_benchmarks)
-#add_subdirectory(unittests)
+add_subdirectory(bench)
+add_subdirectory(internal_benchmarks)
+add_subdirectory(unittests)
 
-set(targets 
-#    evm-test 
-#    evmone-bench 
-#    evmone-bench-internal 
-#    evmone-unittests 
-    testutils)
+set(targets evm-test evmone-bench evmone-bench-internal evmone-unittests testutils)
 
 if(EVMONE_FUZZING)
     add_subdirectory(fuzzer)
