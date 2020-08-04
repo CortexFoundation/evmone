@@ -9,7 +9,7 @@ if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/evmc/.git)
 endif()
 
 option(BUILD_SHARED_LIBS "Build evmone as a shared library" ON)
-option(EVMONE_TESTING "Build tests and test tools" OFF)
+option(EVMONE_TESTING "Build tests and test tools" ON)
 option(EVMONE_FUZZING "Instrument libraries and build fuzzing tools" OFF)
 
 include(cmake/cable/bootstrap.cmake)
@@ -102,9 +102,9 @@ endif()
 if(TARGET evm-test)
     list(APPEND install_targets evm-test)
 endif()
-if(TARGET evmone-bench)
-    list(APPEND install_targets evmone-bench)
-endif()
+#if(TARGET evmone-bench)
+#    list(APPEND install_targets evmone-bench)
+#endif()
 
 set_target_properties(
     ${install_targets} PROPERTIES

@@ -78,6 +78,9 @@ static_assert(
 /// The pointer to function implementing an instruction execution.
 using instruction_exec_fn = const instruction* (*)(const instruction*, execution_state&);
 
+/// The pointer to function implementing a gas calculation of an instruction.
+using gas_calc_fn = const instruction* (*)(const int);
+
 /// The evmone intrinsic opcodes.
 ///
 /// These intrinsic instructions may be injected to the code in the analysis phase.
@@ -95,6 +98,7 @@ enum intrinsic_opcodes
 struct op_table_entry
 {
     instruction_exec_fn fn;
+    gas_calc_fn gn;
     int16_t gas_cost;
     int8_t stack_req;
     int8_t stack_change;
