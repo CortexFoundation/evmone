@@ -4,6 +4,8 @@
 
 #include "instructions.hpp"
 #include "analysis.hpp"
+#include "infer.cpp"
+#include <../test/utils/utils.hpp>
 
 namespace evmone
 {
@@ -396,6 +398,54 @@ const instruction* opx_beginblock(const instruction* instr, execution_state& sta
     return ++instr;
 }
 
+const instruction* op_infer(const instruction* instr, execution_state& state) noexcept
+{
+    // get model address, input address and output_offset from stack
+    const auto model_addr = intx::be::trunc<evmc::address>(state.stack.pop());
+    const auto input_addr = intx::be::trunc<evmc::address>(state.stack.pop());
+    const auto output_offset = state.stack.pop();
+
+    uint8_t err = 0;
+    // get and check ModelMeta from blockchain state according to model address
+    auto model_meta = check_model(state, model_addr, err);
+    if (err != 0) {
+        state.stack.push(uint256(0));
+        return state.exit(evmc_status_code(err));
+    }
+
+    // get and check InputMeta from blockchain state according to input address
+    auto input_meta = check_input_meta(state, input_addr, err);
+    if (err != 0) {
+        state.stack.push(uint256(0));
+        return state.exit(evmc_status_code(err));
+    }
+
+    // Model&Input shape should match
+    if (model_meta.input_shape.size() != input_meta.shape.size()) {
+        state.stack.push(uint256(0));
+        return state.exit(EVMC_META_SHAPE_MISMATCH);
+    }
+    for (unsigned long idx = 0; idx < model_meta.input_shape.size(); idx++) {
+        if (model_meta.input_shape[idx] != input_meta.shape[idx] || model_meta.input_shape[idx] == 0 || input_meta.shape[idx] == 0) {
+            state.stack.push(uint256(0));
+            return state.exit(EVMC_META_SHAPE_MISMATCH);
+        }
+    }
+    // call infer function to inference the model using input data and store output into memory at position output_offset
+    // todo model & input tfs validation
+    auto output = infer(hex({model_addr.bytes, sizeof(model_addr.bytes)}), hex({input_addr.bytes, sizeof(input_addr.bytes)}), model_meta.raw_size, input_meta.raw_size, err);
+    if (err != 0) {
+        state.stack.push(uint256(0));
+        return state.exit(evmc_status_code(err));
+    }
+    auto output_size = output.size();
+    std::memcpy(&state.memory[size_t(output_offset)], output, output_size);
+
+    // the execution of infer succeed and push 1 into the stack
+    state.stack.push(uint256(1));
+    return ++instr;
+}
+
 constexpr op_table create_op_table_frontier() noexcept
 {
     auto table = op_table{};
@@ -513,7 +563,7 @@ constexpr op_table create_op_table_frontier() noexcept
     table[OP_SELFDESTRUCT] = {op_selfdestruct, nullptr, 0, 1, -1};
 
     // Instructions for Cortex
-    table[OP_INFER] = {nullptr, nullptr, 40, 2, -1};
+    table[OP_INFER] = {op_infer, nullptr, 40, 2, -1};
     table[OP_INFERARRAY] = {nullptr, nullptr, 40, 2, -1};
     return table;
 }
@@ -591,3 +641,4 @@ EVMC_EXPORT const op_table& get_op_table(evmc_revision rev) noexcept
     return op_tables[rev];
 }
 }  // namespace evmone
+
