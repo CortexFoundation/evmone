@@ -1,10 +1,11 @@
 #include "infer.h"
 #include "../cvm-runtime/include/cvm/c_api.h"
+#include "../rlpvalue/src/InfInt.h"
 #include <string>
 #include <fstream>
 #include <sstream>
 
-uint8_t decode_model_rlp(ModelMeta* mm, uint8_t* model_raw, uint64_t model_size) {
+uint8_t decode_model_rlp(ModelMeta* mm, const uint8_t* model_raw, uint64_t model_size) {
     if (model_size < 2) {
         return ErrorCodeTypeModelMeta;
     }
@@ -14,13 +15,14 @@ uint8_t decode_model_rlp(ModelMeta* mm, uint8_t* model_raw, uint64_t model_size)
     return SUCCESS;
 }
 
-uint8_t decode_input_rlp(InputMeta* im, uint8_t* input_raw, uint64_t input_size) {
+uint8_t decode_input_rlp(InputMeta* im, const uint8_t* input_raw, uint64_t input_size) {
     if (input_size < 2) {
         return ErrorCodeTypeInputMeta;
     }
     if (!(input_raw[0] == 0x0 && input_raw[1] == 0x1)) {
         return ErrorCodeTypeInputMeta;
     }
+
     return SUCCESS;
 }
 
@@ -39,7 +41,7 @@ ModelMeta check_model(evmone::execution_state& state, evmc::address model_addr, 
 
 InputMeta check_input_meta(evmone::execution_state& state, evmc::address input_addr, uint8_t& err) {
     auto input_size = state.host.get_code_size(input_addr);
-    uint8_t* input_buffer = new uint8_t[input_size];
+    auto* input_buffer = new uint8_t[input_size];
     auto copy_size = state.host.copy_code(input_addr, 0, input_buffer, input_size);
     auto input_meta = InputMeta();
     if (copy_size < input_size) {
@@ -50,7 +52,7 @@ InputMeta check_input_meta(evmone::execution_state& state, evmc::address input_a
     return input_meta;
 }
 
-char* get_file(std::string input_hash, std::string sub_path) {
+char* get_file(const std::string& input_hash, const std::string& sub_path) {
     std::string path = input_hash + sub_path;
     std::ifstream fs(path);
     fs.seekg(0, std::ios::end);    // go to the end
@@ -91,13 +93,13 @@ Model* new_model(char* model_bytes, char* param_bytes, int device_type, int devi
     return model;
 }
 
-uint32_t* infer(std::string model_hash, std::string input_hash, uint64_t model_raw_size, uint64_t input_raw_size, uint8_t& err) {
+uint8_t* infer(const std::string& model_hash, const std::string& input_hash, uint64_t model_raw_size, uint64_t input_raw_size, uint8_t& err) {
     auto input_bytes = get_file(input_hash, DATA_PATH);
     auto model_bytes = get_file(model_hash, SYMBOL_PATH);
     auto param_bytes = get_file(model_hash, PARAM_PATH);
     int device_type = 0, device_id = 0;
     auto model = new_model(model_bytes, param_bytes, device_type, device_id);
-    uint32_t* output;
+    uint8_t* output = nullptr;
     auto input_length = strlen(input_bytes);
     auto status = CVMAPIInference(model->model, input_bytes, int(input_length) ,(char*)output);
     if (status != SUCCEED) {

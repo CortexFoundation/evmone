@@ -64,17 +64,10 @@ public:
     uint64_t input_byte;
 
     uint64_t output_byte;
-
-    uint8_t* predict(uint8_t* data, uint64_t length, int cvm_version) {
-        if (cvm_version == CVM_VERSION_ONE) {
-            if (length < input_size) {
-                return nullptr;
-            }
-        }
-    };
 };
 
 ModelMeta check_model(evmone::execution_state& state, evmc::address model_addr, uint8_t& err);
 InputMeta check_input_meta(evmone::execution_state& state, evmc::address input_addr, uint8_t& err);
-uint32_t* infer(std::string model_hash, std::string input_hash, uint64_t model_raw_size, uint64_t input_raw_size, uint8_t& err);
+uint8_t* infer(const std::string& model_hash, const std::string& input_hash, uint64_t model_raw_size, uint64_t input_raw_size, uint8_t& err);
+Model* new_model(char* model_bytes, char* param_bytes, int device_type, int device_id);
 #endif  // EVMONE_INFER_H

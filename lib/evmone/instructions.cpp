@@ -438,7 +438,7 @@ const instruction* op_infer(const instruction* instr, execution_state& state) no
         state.stack.push(uint256(0));
         return state.exit(evmc_status_code(err));
     }
-    auto output_size = output.size();
+    auto output_size = strlen((char*)output);
     std::memcpy(&state.memory[size_t(output_offset)], output, output_size);
 
     // the execution of infer succeed and push 1 into the stack

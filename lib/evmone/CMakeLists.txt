@@ -18,7 +18,7 @@ add_library(evmone
     instructions.hpp
     limits.hpp
     opcodes_helpers.h
-        infer.cpp infer.h)
+        infer.cpp infer.h rlp.cpp)
 target_link_libraries(evmone PUBLIC evmc::evmc PRIVATE intx::intx ethash::keccak)
 target_include_directories(evmone PUBLIC
     $<BUILD_INTERFACE:${include_dir}>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
