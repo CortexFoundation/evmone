@@ -7,6 +7,10 @@ include(LibraryTools)
 hunter_add_package(intx)
 find_package(intx CONFIG REQUIRED)
 
+#include_directories(${include_dir} ~/cvm-runtime/include ~/evm/rlpvalue/src ~/evm/rlpvalue/univalue/include/)
+#
+#link_directories(~/evm/rlpvalue/.libs ~/evm/rlpvalue/univalue/.libs)
+
 add_library(evmone
     ${include_dir}/evmone/evmone.h
     analysis.cpp
@@ -18,8 +22,9 @@ add_library(evmone
     instructions.hpp
     limits.hpp
     opcodes_helpers.h
-        infer.cpp infer.h rlp.cpp)
-target_link_libraries(evmone PUBLIC evmc::evmc PRIVATE intx::intx ethash::keccak)
+#infer.cpp infer.h rlp.cpp
+        )
+target_link_libraries(evmone PUBLIC evmc::evmc PRIVATE intx::intx ethash::keccak) 
 target_include_directories(evmone PUBLIC
     $<BUILD_INTERFACE:${include_dir}>$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )

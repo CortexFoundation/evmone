@@ -41,9 +41,11 @@ macro(cable_configure_compiler)
         # Set helper variables recognizing C++ compilers.
         if(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
             set(CABLE_COMPILER_GNU TRUE)
+            message("gnu true....")
         elseif(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
             # This matches both clang and AppleClang.
             set(CABLE_COMPILER_CLANG TRUE)
+            message("clang true....")
         endif()
 
         if(CABLE_COMPILER_GNU OR CABLE_COMPILER_CLANG)

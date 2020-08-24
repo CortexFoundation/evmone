@@ -4,7 +4,7 @@
 
 #include "instructions.hpp"
 #include "analysis.hpp"
-#include "infer.cpp"
+//#include "infer.h"
 #include <../test/utils/utils.hpp>
 
 namespace evmone
@@ -405,6 +405,7 @@ const instruction* op_infer(const instruction* instr, execution_state& state) no
     const auto input_addr = intx::be::trunc<evmc::address>(state.stack.pop());
     const auto output_offset = state.stack.pop();
 
+  /*
     uint8_t err = 0;
     // get and check ModelMeta from blockchain state according to model address
     auto model_meta = check_model(state, model_addr, err);
@@ -443,6 +444,9 @@ const instruction* op_infer(const instruction* instr, execution_state& state) no
 
     // the execution of infer succeed and push 1 into the stack
     state.stack.push(uint256(1));
+
+  */
+
     return ++instr;
 }
 
