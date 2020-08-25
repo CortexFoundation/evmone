@@ -41,11 +41,9 @@ macro(cable_configure_compiler)
         # Set helper variables recognizing C++ compilers.
         if(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
             set(CABLE_COMPILER_GNU TRUE)
-            message("gnu true....")
         elseif(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
             # This matches both clang and AppleClang.
             set(CABLE_COMPILER_CLANG TRUE)
-            message("clang true....")
         endif()
 
         if(CABLE_COMPILER_GNU OR CABLE_COMPILER_CLANG)
@@ -59,11 +57,11 @@ macro(cable_configure_compiler)
             endif()
 
             # Enable basing warnings set and treat them as errors.
-            add_compile_options(-Werror -Wall -Wextra -Wshadow)
+#    add_compile_options(-Werror -Wall -Wextra -Wshadow)
 
             if(NOT cable_NO_CONVERSION_WARNINGS)
                 # Enable conversion warnings if not explicitly disabled.
-                add_compile_options(-Wconversion -Wsign-conversion)
+#                add_compile_options(-Wconversion -Wsign-conversion)
             endif()
 
             # Allow unknown pragmas, we don't want to wrap them with #ifdefs.
