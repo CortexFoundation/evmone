@@ -44,5 +44,14 @@ https://github.com/CortexFoundation/cvm-runtime/blob/riscv/README.md
 8. make 
 ```
 
-#runing on riscv simulator
+# runing on riscv simulator
 1. reference: https://github.com/CortexFoundation/cvm-runtime/blob/riscv/README.md
+2. cp test_evm_call ${riscv64-linux}/busybear-linux/etc/tests/
+3. cd ${riscv64-linux}/busybear-linux/
+4. make clean && make && ./scripts/start-qemu.sh
+5. log in root, passward is busybear
+6. cd /etc/tests && ./test_evm_call
+7. get the output:
+```
+gase use = 1690, expect 1690
+```
