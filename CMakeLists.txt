@@ -40,9 +40,9 @@ hunter_add_package(ethash)
 find_package(ethash CONFIG REQUIRED)
 
 
-include_directories(~/cvm-runtime/include ~/evm/rlpvalue/src ~/evm/rlpvalue/univalue/include/)
+include_directories(./cvm-runtime/include ./rlpvalue/src ./rlpvalue/univalue/include/)
 #
-link_directories(~/evm/rlpvalue/.libs ~/evm/rlpvalue/univalue/.libs ~/cvm-runtime/build)
+link_directories(./rlpvalue/.libs ./rlpvalue/univalue/.libs ./cvm-runtime/build)
 link_libraries(cvm)
 
 option(EVMC_TOOLS "Build EVMC test tools" ${EVMONE_TESTING})
