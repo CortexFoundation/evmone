@@ -1,6 +1,8 @@
 #include "infer.h"
-#include "../cvm-runtime/include/cvm/c_api.h"
-#include "../rlpvalue/src/InfInt.h"
+//#include "../cvm-runtime/include/cvm/c_api.h"
+//#include "../rlpvalue/src/InfInt.h"
+#include "cvm/c_api.h"
+#include "InfInt.h"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -70,23 +72,35 @@ Model* new_model(char* model_bytes, char* param_bytes, int device_type, int devi
     if (status != SUCCEED) {
         return nullptr;
     }
-    status = CVMAPIGetStorageSize(model->model, &model->size);
+    long long unsigned int size;
+    status = CVMAPIGetStorageSize(model->model, &size);
+    model->size = size;
     if (status != SUCCEED) {
         return nullptr;
     }
-    status = CVMAPIGetGasFromModel(model->model, &model->ops);
+    
+    long long unsigned int ops;
+    status = CVMAPIGetGasFromModel(model->model, &ops);
+    model->ops = ops;
     if (status != SUCCEED) {
         return nullptr;
     }
-    status = CVMAPIGetInputLength(model->model, &model->input_size);
+
+    long long unsigned int input_size;
+    status = CVMAPIGetInputLength(model->model, &input_size);
+    model->input_size = input_size;
     if (status != SUCCEED) {
         return nullptr;
     }
-    status = CVMAPIGetInputTypeSize(model->model, &model->input_byte);
+    long long unsigned int input_byte;
+    status = CVMAPIGetInputTypeSize(model->model, &input_byte);
+    model->input_byte = input_byte;
     if (status != SUCCEED) {
         return nullptr;
     }
-    status = CVMAPIGetOutputTypeSize(model->model, &model->output_byte);
+    long long unsigned int output_byte;
+    status = CVMAPIGetOutputTypeSize(model->model, &output_byte);
+    model->output_byte = output_byte;
     if (status != SUCCEED) {
         return nullptr;
     }

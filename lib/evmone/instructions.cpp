@@ -4,8 +4,8 @@
 
 #include "instructions.hpp"
 #include "analysis.hpp"
-#include "infer.cpp"
-#include <../test/utils/utils.hpp>
+#include "infer.h"
+//#include "../test/utils/utils.hpp"
 
 namespace evmone
 {
@@ -433,6 +433,18 @@ const instruction* op_infer(const instruction* instr, execution_state& state) no
     }
     // call infer function to inference the model using input data and store output into memory at position output_offset
     // todo model & input tfs validation
+    
+    auto hex_basic = [](uint8_t b) noexcept -> std::string {
+      static constexpr auto hex_chars = "0123456789abcdef";
+      return {hex_chars[b >> 4], hex_chars[b & 0xf]};
+    };
+    auto hex = [&hex_basic](std::basic_string_view<uint8_t> bs){
+      std::string str;
+      str.reserve(bs.size() * 2);
+      for (auto b : bs)
+        str += hex_basic(b);
+      return str;
+    };
     auto output = infer(hex({model_addr.bytes, sizeof(model_addr.bytes)}), hex({input_addr.bytes, sizeof(input_addr.bytes)}), model_meta.raw_size, input_meta.raw_size, err);
     if (err != 0) {
         state.stack.push(uint256(0));
@@ -443,6 +455,8 @@ const instruction* op_infer(const instruction* instr, execution_state& state) no
 
     // the execution of infer succeed and push 1 into the stack
     state.stack.push(uint256(1));
+
+
     return ++instr;
 }
 

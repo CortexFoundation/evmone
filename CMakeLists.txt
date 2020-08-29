@@ -39,6 +39,12 @@ endif()
 hunter_add_package(ethash)
 find_package(ethash CONFIG REQUIRED)
 
+
+include_directories(~/cvm-runtime/include ~/evm/rlpvalue/src ~/evm/rlpvalue/univalue/include/)
+#
+link_directories(~/evm/rlpvalue/.libs ~/evm/rlpvalue/univalue/.libs ~/cvm-runtime/build)
+link_libraries(cvm)
+
 option(EVMC_TOOLS "Build EVMC test tools" ${EVMONE_TESTING})
 option(EVMC_INSTALL "Install EVMC" OFF)
 add_subdirectory(evmc)
@@ -50,7 +56,7 @@ if(CABLE_COMPILER_GNULIKE)
     if(CABLE_COMPILER_CLANG)
         set(CMAKE_CXX_FLAGS_COVERAGE "-fprofile-instr-generate -fcoverage-mapping")
     elseif(CABLE_COMPILER_GNU)
-        set(CMAKE_CXX_FLAGS_COVERAGE "--coverage")
+        set(CMAKE_CXX_FLAGS_COVERAGE "--coverage std=c++17")
     endif()
 elseif(MSVC)
     add_compile_options(/wd4324)  # Disabled warning about alignment caused by alignas.
