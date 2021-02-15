@@ -8,7 +8,7 @@ if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/evmc/.git)
     message(FATAL_ERROR "Git submodules not initialized, execute:\n  git submodule update --init")
 endif()
 
-option(BUILD_SHARED_LIBS "Build evmone as a shared library" OFF)
+option(BUILD_SHARED_LIBS "Build evmone as a shared library" ON)
 option(EVMONE_TESTING "Build tests and test tools" ON)
 option(EVMONE_FUZZING "Instrument libraries and build fuzzing tools" OFF)
 
@@ -39,6 +39,12 @@ endif()
 hunter_add_package(ethash)
 find_package(ethash CONFIG REQUIRED)
 
+
+include_directories(./cvm-runtime/include ./rlpvalue/src ./rlpvalue/univalue/include/)
+#
+link_directories(./rlpvalue/.libs ./rlpvalue/univalue/.libs ./cvm-runtime/build)
+link_libraries(cvm)
+
 option(EVMC_TOOLS "Build EVMC test tools" ${EVMONE_TESTING})
 option(EVMC_INSTALL "Install EVMC" OFF)
 add_subdirectory(evmc)
@@ -50,7 +56,7 @@ if(CABLE_COMPILER_GNULIKE)
     if(CABLE_COMPILER_CLANG)
         set(CMAKE_CXX_FLAGS_COVERAGE "-fprofile-instr-generate -fcoverage-mapping")
     elseif(CABLE_COMPILER_GNU)
-        set(CMAKE_CXX_FLAGS_COVERAGE "--coverage")
+        set(CMAKE_CXX_FLAGS_COVERAGE "--coverage std=c++17")
     endif()
 elseif(MSVC)
     add_compile_options(/wd4324)  # Disabled warning about alignment caused by alignas.
@@ -102,9 +108,9 @@ endif()
 if(TARGET evm-test)
     list(APPEND install_targets evm-test)
 endif()
-if(TARGET evmone-bench)
-    list(APPEND install_targets evmone-bench)
-endif()
+#if(TARGET evmone-bench)
+#    list(APPEND install_targets evmone-bench)
+#endif()
 
 set_target_properties(
     ${install_targets} PROPERTIES

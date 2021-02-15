@@ -1,3 +1,9 @@
 [submodule "evmc"]
 	path = evmc
-	url = https://github.com/ethereum/evmc
+	url = https://github.com/CortexFoundation/evmc
+[submodule "rlpvalue"]
+	path = rlpvalue
+	url = https://github.com/bloq/rlpvalue.git
+[submodule "cvm-runtime"]
+	path = cvm-runtime
+	url = https://github.com/CortexFoundation/cvm-runtime.git
